@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width">
+    <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.min.js"></script>
+    <title>Project 2</title>
+</head>
+<body style="background: #CCCCCC;">
+<div style="text-align: center">
+	<h1 style = "font-weight: bold;font-size: 4rem; color: #339999;text-align: center;">Services Invocation System</h1>
+	
+    <form class="send_form" action="" method="POST"
+          style="display: inline-block;text-align: center;margin: 0 auto;padding: 40px 60px;font-size: 16px">
+			
+        <p>username:
+        <p>
+            <input type="text" name="username" autocomplete="off">
+        <p>task_id:
+        <p>
+            <select name="next_invoke_func" id="sel">
+                <option value="s1">s1</option>
+                <option value="s2">s2</option>
+                <option value="s3">s3</option>
+                <option value="s4">s4</option>
+                <option value="s5">s5</option>
+                <option value="s6">s6</option>
+                <option value="s7">s7</option>
+                <option value="s8">s8</option>
+                <option value="s9">s9</option>
+                <option value="s10">s10</option>
+            </select>
+            <input class="sub_button" type="button" value="START" onClick="tpformsubmit()">
+            <input class="restart_button" type="button" value="RESTART" onClick="restart()" style="display: none">
+
+    </form>
+</div>
+
+
+
+<div class="output" style="text-align: center;display: none">
+    <div style="display:inline-block;margin: 0 auto;text-align: left">
+        <span>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span><br>
+        <div style="text-align: center">
+            <span style="">output:</span><br>
+        </div>
+        <pre class="recv_content" style="padding-left: 30%"></pre>
+        <br>
+        <span>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span><br>
+    </div>
+    <span class="invoke_finish" style="display: none">invoke finish</span>
+</div>
+<br>
+
+
+
+<script>
+    function tpformsubmit() {
+        var username = $('input[name=username]').val();
+        var next_invoke_func = $('#sel option:selected').val();
+        url = '/index?nextfunc=' + next_invoke_func + '&username=' + username;
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function (res) {
+                if (res.errno == 1001) {
+                    // finish invoke  hint restart
+                    $('.restart_button').show();
+                    $('.sub_button').hide();
+                    return
+                }
+                $('.recv_content').html('');
+                $('.output').attr('style', 'display:block;text-align:center;');
+                console.log(res);
+                if (username.match('^[a-mA-M]')) {
+                    var data = JSON.stringify(res, null, 2);
+                    $('.recv_content').html(data);
+                } else {
+                    var xml_str = new XMLSerializer().serializeToString(res);
+                    $('.recv_content').text(xml_str);
+                }
+                set_next_invoke();
+            },
+            error: function (res) {
+                $('.recv_content').html(res)
+            }
+        })
+    }
+
+    function isJSON(str) {
+        if (typeof str == 'string') {
+            try {
+                var obj = JSON.parse(str);
+                if (typeof obj == 'object' && obj) {
+                    console.log('是JSON');
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (e) {
+                console.log('error：' + str + '!!!' + e);
+                return false;
+            }
+        }
+    }
+
+    function getCookie(name) {
+        var strcookie = document.cookie;// get cookie str
+        var arrcookie = strcookie.split("; ");// split cookie str
+        // traversal each
+        for (var i = 0; i < arrcookie.length; i++) {
+            var arr = arrcookie[i].split("=");
+            if (arr[0] == name) {
+                return arr[1];
+            }
+        }
+        return "";
+    }
+
+    function set_next_invoke() {
+        next_invoke = getCookie('next');
+        if (next_invoke == '') {
+            $('.sub_button').val('start');
+        } else {
+            if (next_invoke == 's0') {
+                $('.sub_button').hide();
+                $('.restart_button').show();
+                $('.invoke_finish').attr('style', 'display:block');
+                return
+            }
+            $('.sub_button').val('next');
+            $('.invoke_finish').hide();
+            // if (next_invoke == $('#sel option:selected').val()) {
+            //     $('.invoke_finish').attr('style', 'display:block');
+            // }
+            $("#sel").val(next_invoke);
+        }
+    }
+
+    // remove cookie
+    function removeCookie(name) {
+        var d = new Date();
+        d.setTime(d.getTime() - 10000);
+        document.cookie = name + '=1; expires=' + d.toGMTString();
+    }
+
+    function restart() {
+        $('.invoke_finish').hide();
+        removeCookie('next');
+        $("#sel").val('s1');
+        $('input[name=username]').val('');
+        $('.output').hide();
+        $('.restart_button').hide();
+        $('.sub_button').val('start');
+        $('.sub_button').show();
+    }
+
+    set_next_invoke();
+</script>
+
+
+</body>
+</html>
