@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block main %}
+    <div align='justify'>
+        <h1 style = "font-weight: bold;font-size: 5rem; color: rgb(47, 152, 79);text-align: center;">A Simple Word Game</h1>
+		<br>
+		<br>
+		<p style = "font-size:2rem;text-align: center;">This application is created to help you learn English words!</p>
+
+        <br>
+        <p  style = "text-align: center; font-size:1.2rem"> I build this web application as my first project in CIS 571 course. It is an English words based game. It bases on <a target="_blank" style="background-color: orange; color:black " href="https://www.wordfrequency.info/">5000 most common words in English</a>, try to guess all of them! There are four APIs used to achieve the goal:
+		
+		<div style="position:absolute;left:45%;margin-left:-100px;">
+			<ul>
+            <li><a target="_blank" style="background-color: orange; color:black; font-size:1.2rem" href="https://developer.oxforddictionaries.com/">Oxford Dictionaries API</a></li>
+            <li><a target="_blank" style="background-color: orange; color:black; font-size:1.2rem" href="https://cloud.google.com/translate/">Google Cloud Translation API</a></li>
+			<li><a target="_blank" style="background-color: orange; color:black; font-size:1.2rem" href="#">REST API: Register API, Login API</a></li>
+			<li><a target="_blank" style="background-color: orange; color:black; font-size:1.2rem" href="#">SOUP API: Get_wordlist API</a></li>
+			</ul>
+		</div>
+		</p>
+
+		
+    </div>
+{% endblock %}
